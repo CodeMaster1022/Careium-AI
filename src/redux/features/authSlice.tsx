@@ -32,6 +32,7 @@ export const registerUser = createAsyncThunk(
         } catch (error) {
             return rejectWithValue(error)
     }
+    }
 );
 
 // Async thunk for user login
@@ -39,7 +40,8 @@ export const loginUser = createAsyncThunk(
     'auth/login',
     async (credentials: { username: string; password: string }, { rejectWithValue }) => {
         try {
-            const response = await axios.post('/api/user/login', credentials);
+            console.log("==========>")
+            const response = await axios.post('http://127.0.0.1:4000/login', credentials);
             return response.data; // Assuming the response contains user data and token
         } catch (error) {
             return rejectWithValue(error);
