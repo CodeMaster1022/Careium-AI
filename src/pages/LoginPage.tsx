@@ -1,42 +1,53 @@
 
 import { Link } from "react-router-dom"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
+// import { useDispatch } from "react-redux";
+// import { loginUser } from '../redux/features/authSlice';
+// import { AppDispatch } from '../redux/store';
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
+import "../CSS/background.css"
+import { useState } from "react";
 import "../CSS/sendButton.css"
 export default function LoginPage () {
+
+  const [method, setMethod] = useState(false);
+  // const dispatch = useDispatch<AppDispatch>(); // Use typed dispatch
+
+  // const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+  //     e.preventDefault();
+  //     const formData = new FormData(e.currentTarget);
+  //     const credentials = {
+  //         username: formData.get('username') as string,
+  //         password: formData.get('password') as string,
+  //     };
+      
+  //     dispatch(loginUser(credentials)); // This should now work without error
+  // };
   return (
+    <div className="background">
     <div className="w-full h-screen flex justify-center items-center bg-[#212121]">
-      <div className="w-96 rounded-2xl bg-slate-900">
-        <Tabs defaultValue="tzv1" className="p-4">
-          <TabsList className="w-full py-6">
-            <TabsTrigger value="tzv1" className="w-1/3 ">TZV1</TabsTrigger>
-            <TabsTrigger value="tzv2" className="w-1/3 py-2">TZV2</TabsTrigger>
-            <TabsTrigger value="register" className="w-1/3 py-2">REGISTER</TabsTrigger>
-          </TabsList>
-          <TabsContent value="tzv1">
-            <div className="flex flex-col gap-5 p-4">
-              <input className="bg-slate-900 w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 focus:ring-offset-gray-800" placeholder="Login" />
-              <input className="bg-slate-900 w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 focus:ring-offset-gray-800" placeholder="Password" />
-              <input className="bg-slate-900 w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 focus:ring-offset-gray-800" placeholder="or use Mac address" />
+    <div className="background">
+      <div className="w-[350px] rounded-2xl bg-slate-900 py-4">
+            <div className="flex flex-col gap-5 p-8">
+              <p className="text-center text-4xl text-gray-300 mb-4 font-bold">Welcome!</p>
+              {
+                method? 
+                  (<input className="bg-slate-900 w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 focus:ring-offset-gray-800 text-white" placeholder="username" />)
+                  :(<input className="bg-slate-900 w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 focus:ring-offset-gray-800 text-white" placeholder="Mac address" />)
+              }
+             
+              <input className="bg-slate-900 w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 text-white focus:ring-offset-gray-800" placeholder="password" type="password"/>
+              <label className="flex cursor-pointer items-center justify-between p-1 text-slate-400" onClick={()=>setMethod(!method)}>
+                  {method?(<p>Use Mac address</p>):(<p>Use username</p>)}
+                  <div className="relative inline-block">
+                    <input className="peer h-6 w-12 cursor-pointer appearance-none rounded-full border border-gray-300 bg-gary-400 checked:border-green-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2" type="checkbox"/>
+                    <span className="pointer-events-none absolute left-1 top-1 block h-4 w-4 rounded-full bg-slate-600 transition-all duration-200 peer-checked:left-7 peer-checked:bg-green-300"></span>
+                  </div>
+                </label>
                 <Link to="/chat" className="inline-block cursor-pointer rounded-md bg-gray-700 px-4 py-3.5 text-center text-sm font-semibold uppercase text-white transition duration-200 ease-in-out hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-700 focus-visible:ring-offset-2 active:scale-95">Login</Link>
             </div>          
-          </TabsContent>
-          <TabsContent value="tzv2">
-            <div className="flex flex-col gap-5 p-4">
-              <input className="bg-slate-900 w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 focus:ring-offset-gray-800" placeholder="Login" />
-              <input className="bg-slate-900 w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 focus:ring-offset-gray-800" placeholder="Password" />
-              <input className="bg-slate-900 w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 focus:ring-offset-gray-800" placeholder="or use Mac address" />
-                <Link to="/chat" className="inline-block cursor-pointer rounded-md bg-gray-700 px-4 py-3.5 text-center text-sm font-semibold uppercase text-white transition duration-200 ease-in-out hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-700 focus-visible:ring-offset-2 active:scale-95">Login</Link>
-            </div>               
-          </TabsContent> 
-          <TabsContent value="register">
-            <div className="flex flex-col gap-8 px-4 py-12">
-              <input className="bg-slate-900 w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 focus:ring-offset-gray-800" placeholder="Login" />
-              <input className="bg-slate-900 w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 focus:ring-offset-gray-800" placeholder="Password" />
-                <Link to="/chat" className="inline-block cursor-pointer rounded-md bg-gray-700 px-4 py-3.5 text-center text-sm font-semibold uppercase text-white transition duration-200 ease-in-out hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-700 focus-visible:ring-offset-2 active:scale-95">Login</Link>
-            </div>               
-          </TabsContent>        
-        </Tabs>
       </div>
+    </div>
+    </div>
     </div>
   )
 }
