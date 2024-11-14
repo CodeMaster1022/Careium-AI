@@ -1,9 +1,11 @@
-"use client"
+'use client'
+
 import { useState } from "react"
-import { Button } from "../components/ui/button"
-import { Input } from "../components/ui/input"
-import { ScrollArea } from "../components/ui/scroll-area"
-import TicketModal from "../components/modal/TicketModal"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import TicketModal from "@/components/modal/TicketModal"
+
 interface Message {
   id: number
   content: string
@@ -56,7 +58,8 @@ export default function Component() {
     },
   ])
   const [newMessage, setNewMessage] = useState("")
-  let [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   const selectedTicket = tickets.find((ticket) => ticket.isSelected)
 
@@ -85,11 +88,16 @@ export default function Component() {
     setNewMessage("")
   }
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen)
+  }
+
   return (
     <div className="flex w-full justify-center bg-[#181818]">
-      <div className="flex h-screen max-w-[90%] w-full">
-        <div className="w-96 bg-muted/50 bg-[#212121]">
-          <div className="p-4 bg-[#212121] h-screen">
+      <div className="flex h-screen w-full max-w-[1440px]">
+        {/* Sidebar */}
+        <div className={`${isSidebarOpen ? 'block' : 'hidden'} md:block w-full md:w-96 bg-[#212121] overflow-y-auto`}>
+          <div className="p-4 h-full">
             <h2 className="mb-4 text-2xl font-bold text-blue-500">My tickets</h2>
             {tickets.map((ticket) => (
               <div
@@ -97,14 +105,15 @@ export default function Component() {
                 className={`mb-2 cursor-pointer rounded-lg p-4 ${
                   ticket.isSelected ? "bg-[#8774E1] text-primary-foreground" : "hover:bg-muted text-white"
                 }`}
-                onClick={() =>
+                onClick={() => {
                   setTickets(
                     tickets.map((t) => ({
                       ...t,
                       isSelected: t.id === ticket.id,
                     }))
                   )
-                }
+                  setIsSidebarOpen(false) // Close sidebar on mobile after selection
+                }}
               >
                 Ticket #{ticket.id}
               </div>
@@ -114,14 +123,41 @@ export default function Component() {
             </Button>
           </div>
         </div>
-        <div className="flex flex-1 flex-col bg-[url('./assets/1.jpg')] bg-cover bg-center"> 
-          <div className="h-16 bg-[#212121] border-[black] border-l border-border"></div>
+
+        {/* Main Content */}
+        <div className={`${isSidebarOpen ? 'hidden' : 'block'} flex flex-1 flex-col bg-[url('./assets/1.jpg')] bg-cover bg-center`}>
+          {/* Header */}
+          <div className="h-16 bg-[#212121] border-[black] border-l border-border flex items-center px-4">
+            <Button
+              className="md:hidden mr-2"
+              variant="ghost"
+              size="icon"
+              onClick={toggleSidebar}
+              aria-label="Toggle sidebar"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                className="h-6 w-6"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </Button>
+            <h1 className="text-xl font-bold text-white">
+              {selectedTicket ? `Ticket #${selectedTicket.id}` : 'Select a ticket'}
+            </h1>
+          </div>
+
+          {/* Messages */}
           <ScrollArea className="flex-1 p-4 border-none">
             {selectedTicket?.messages.map((message) => (
-              <div className="flex justify-center w-full">
+              <div key={message.id} className="flex justify-center w-full mb-4">
                 <div
-                  key={message.id}
-                  className={`flex mb-1 max-w-[60%] w-full ${message.isOutgoing ? "justify-start" : "justify-end"}`}
+                  className={`flex max-w-[80%] md:max-w-[70%] w-full ${
+                    message.isOutgoing ? "justify-start" : "justify-end"
+                  }`}
                 >
                   <div
                     className={`rounded-2xl px-3 py-1 ${
@@ -129,19 +165,20 @@ export default function Component() {
                     }`}
                   >
                     <div className="flex">
-                      <p className=" text-md">{message.content}</p>
-                      <p className="text-gray-300 text-[12px] mt-2">&nbsp;{message.timestamp}</p>
+                      <p className="text-md break-words">{message.content}</p>
+                      <p className="text-[10px] md:text-[12px] text-gray-300 ml-1 mt-1 self-end">{message.timestamp}</p>
+                    </div>
                   </div>
-                  </div>
-                  {/* <div className="mt-1 text-xs text-white text-muted-foreground">{message.timestamp}</div> */}
                 </div>
               </div>
             ))}
           </ScrollArea>
-          <div className="p-8">
-            <div className="flex gap-2 max-w-[60%] mx-auto">
+
+          {/* Input Area */}
+          <div className="p-4 md:p-8">
+            <div className="flex gap-2 max-w-full md:max-w-[70%] mx-auto">
               <Input
-                className="py-6 bg-[#212121] text-white"
+                className="py-4 md:py-6 bg-[#212121] text-white flex-grow"
                 placeholder="Type your message..."
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
@@ -151,11 +188,11 @@ export default function Component() {
                   }
                 }}
               />
-              <button
-                  className="flex items-center bg-blue-500 text-white gap-1 px-4 py-2 cursor-pointer font-semibold tracking-widest rounded-md hover:bg-blue-400 duration-300 hover:gap-2 hover:translate-x-3"
-                  onClick={handleSendMessage}
+              <Button
+                className="bg-blue-500 text-white hover:bg-blue-400 transition-all duration-300 md:p-6"
+                onClick={handleSendMessage}
               >
-                Send
+                <span className="sr-only">Send message</span>
                 <svg
                   className="w-5 h-5"
                   stroke="currentColor"
@@ -170,12 +207,12 @@ export default function Component() {
                     strokeLinecap="round"
                   ></path>
                 </svg>
-              </button>
+              </Button>
             </div>
           </div>
         </div>
       </div>
-      <TicketModal option={isOpen} handleClose={() => setIsOpen(false)}/>
+      <TicketModal option={isOpen} handleClose={() => setIsOpen(false)} />
     </div>
   )
 }
