@@ -60,10 +60,10 @@ const  TicketModal: React.FC<TicketMoalProps> =({option, handleClose}) => {
     const [selectedOption, setSelectedOption] = useState<Option | null>(null);
     const [selectedChannel, setSelectedChannel] = useState<Channel | null>(null);
 
-    const handleChange = (value: Option | null) => {
+    const handleChange = (value: any) => {
         setSelectedOption(value);
       };
-    const handleChannelChange = (value: Channel | null) => {
+    const handleChannelChange = (value: any) => {
     setSelectedChannel(value);
     };
     
@@ -105,7 +105,7 @@ const  TicketModal: React.FC<TicketMoalProps> =({option, handleClose}) => {
                 </div>
                 <Select
                     value={selectedOption}
-                    onChange={()=>handleChange}
+                    onChange={handleChange}
                     options={options}
                     isMultiple={true}
                     isSearchable={true}
@@ -136,7 +136,7 @@ const  TicketModal: React.FC<TicketMoalProps> =({option, handleClose}) => {
                 />
                 <Select
                     value={selectedChannel}
-                    onChange={()=>handleChannelChange}
+                    onChange={handleChannelChange}
                     options={channels}
                     isMultiple={true}
                     isSearchable={true}
