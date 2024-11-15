@@ -32,21 +32,18 @@ export default function LoginPage () {
               <p className="text-center text-4xl text-gray-300 mb-4 font-bold">Welcome!</p>
               {
                 method? 
-                  (<input className="bg-slate-900 w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 focus:ring-offset-gray-800 text-white" placeholder="username" />)
+                  (
+                  <>
+                  <input className="bg-slate-900 w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 focus:ring-offset-gray-800 text-white" placeholder="username" />
+                  <input className="bg-slate-900 w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 text-white focus:ring-offset-gray-800" placeholder="password" type="password"/>
+                  </>
+                  )
                   :(
                   <>
                     <input className="bg-slate-900 w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 focus:ring-offset-gray-800 text-white" placeholder="Mac address" />
                     <input className="bg-slate-900 w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 focus:ring-offset-gray-800 text-white" placeholder="Serial Number" />
                   </>)
               }
-              <input className="bg-slate-900 w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-offset-2 text-white focus:ring-offset-gray-800" placeholder="password" type="password"/>
-              {/* <select
-                  className="bg-slate-900 appearance-none text-white relative px-4 py-3 ring-0 outline-none border border-neutral-300 text-sm font-bold rounded-lg block w-full p-2"
-                  aria-placeholder='Select the server...'
-              >
-                <option> TVZ 1</option>
-                <option> TVZ 2</option>
-              </select> */}
               <label className="flex cursor-pointer items-center justify-between p-1 text-slate-400" onClick={()=>{setSelectMember(!selectMember),setMethod(true)}}>
                 {selectMember?(
                 <>
