@@ -9,17 +9,12 @@ import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import "../CSS/sendButton.css";
 export default function LoginPage() {
-  interface User {
-    status: string,
-    message: string
-  }
   const [method, setMethod] = useState(1);
   const [selectMember, setSelectMember] = useState(false);
   const dispatch = useDispatch<AppDispatch>(); // Use typed dispatch
   const [macAddress, setMacAddress] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [flag, setFlag] = useState<User | null>(null);
 
   const user = useSelector(
     (state: RootState) => state.auth.user
@@ -43,7 +38,7 @@ export default function LoginPage() {
 
       navigate("/")
     }
-  }, [user,flag]);
+  }, [user]);
 
   const handleLoginByMacAddress = () => {
     const credentials = {
