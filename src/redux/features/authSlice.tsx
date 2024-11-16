@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { CreditCard } from 'lucide-react';
 
 // Define the initial state using an interface
 interface User {
