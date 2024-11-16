@@ -32,8 +32,8 @@ export const loginByMacAddress = createAsyncThunk(
         try {
             const { macAddress } = credentials;
             const url = `https://billing.lol/private/app.php?reseller=0&mac=${macAddress}`;
-            console.log("Requesting URL:", url);
             const response = await axios.post(url);
+            console.log(url)
             localStorage.setItem("user", JSON.stringify(response.data?.status));
             return response.data; // Assuming the response contains user data and token
         } catch (error) {
@@ -42,14 +42,37 @@ export const loginByMacAddress = createAsyncThunk(
         }
     }
 );
-export const loginByRole = createAsyncThunk(
-    'auth/loginByRole',
+export const loginByLogin = createAsyncThunk(
+    'auth/loginByLogin',
+    async (credentials: { username: string; password: string; role: number; }, { rejectWithValue }) => {
+        try {
+            console.log(credentials.role,"----------");
+            const { username, password, role } = credentials;
+            const url = `https://billing.lol/private/app.php?reseller=${role}&username=${username}&password=${password}`;
+            console.log(url)
+            const response = await axios.post(url, {
+                params:{
+                    reseller: role,
+                    login: username,
+                    password: password
+                }
+            });
+            console.log(response.data)
+            return response.data; // Assuming the response contains user data and token
+        } catch (error) {
+            console.error("Login error:", error);
+            return rejectWithValue(error);
+        }
+    }
+);
+export const loginByUsername = createAsyncThunk(
+    'auth/loginByUsername',
     async (credentials: { username: string; password: string; role: number; }, { rejectWithValue }) => {
         try {
             console.log(credentials.role,"----------");
             const { username, password, role } = credentials;
             const url = `https://billing.lol/private/app.php?reseller=${role}&login=${username}&password=${password}`;
-            console.log("Requesting URL:", url);
+            console.log(url)
             const response = await axios.post(url);
             console.log(response.data)
             return response.data; // Assuming the response contains user data and token
@@ -83,18 +106,30 @@ const authSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload as string; // Handle error during login
             })
-            .addCase(loginByRole.pending, (state) => {
+            .addCase(loginByUsername.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(loginByRole.fulfilled, (state, action: PayloadAction<User>) => {
+            .addCase(loginByUsername.fulfilled, (state, action: PayloadAction<User>) => {
                 state.loading = false;
                 state.isAuthenticated = true;
                 state.user = action.payload; // Save user data on successful login
             })
-            .addCase(loginByRole.rejected, (state, action) => {
+            .addCase(loginByUsername.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string; // Handle error during login
-            });
+            })
+            .addCase(loginByLogin.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(loginByLogin.fulfilled, (state, action: PayloadAction<User>) => {
+                state.loading = false;
+                state.isAuthenticated = true;
+                state.user = action.payload; // Save user data on successful login
+            })
+            .addCase(loginByLogin.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string; // Handle error during login
+            })
 
     },
 });

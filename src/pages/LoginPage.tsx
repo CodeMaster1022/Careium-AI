@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { loginByMacAddress, loginByRole } from "../redux/features/authSlice";
+import { loginByMacAddress, loginByUsername, loginByLogin } from "../redux/features/authSlice";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../redux/store";
 import { AppDispatch } from "../redux/store";
@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import "../CSS/sendButton.css";
 export default function LoginPage() {
   const [method, setMethod] = useState(1);
-  const [selectMember, setSelectMember] = useState(false);
+  const [selectMember, setSelectMember] = useState(0);
   const dispatch = useDispatch<AppDispatch>(); // Use typed dispatch
   const [macAddress, setMacAddress] = useState("");
   const [username, setUsername] = useState("");
@@ -32,7 +32,7 @@ export default function LoginPage() {
     } else if(user?.status == "fail"){
       toast({
         title: "Failed",
-        description: "Invaild or Expired",
+        description: user?.message,
         variant: "destructive"
       });            
 
@@ -43,6 +43,7 @@ export default function LoginPage() {
   const handleLoginByMacAddress = () => {
     const credentials = {
       macAddress: macAddress,
+      role: selectMember
     };
     if (macAddress == "") {
       toast({
@@ -64,7 +65,7 @@ export default function LoginPage() {
     const credentials = {
       username: username,
       password: password,
-      role: method,
+      role: selectMember,
     };
     if (username == "" || password == "") {
       toast({
@@ -73,13 +74,18 @@ export default function LoginPage() {
       });
     } else {
       try{
-        dispatch(loginByRole(credentials))
+        if(selectMember == 0){
+          dispatch(loginByUsername(credentials))
+        } else {
+          dispatch(loginByLogin(credentials))
+        }  
     }
      catch(e){
         console.log(e);
       }
     }
   };
+
 
   return (
     <div className="background">
@@ -128,7 +134,7 @@ export default function LoginPage() {
                 <div
                   className="relative inline-block"
                   onClick={() => {
-                    setSelectMember(!selectMember), setMethod(1);
+                    setSelectMember((prev) => (prev === 0 ? 1 : 0)), setMethod(1);
                   }}
                 >
                   <input
@@ -140,7 +146,7 @@ export default function LoginPage() {
               </label>
               {selectMember ? (
                 <label className="flex cursor-pointer items-center justify-between p-1 text-slate-400">
-                  {method ? <p>Use Mac address</p> : <p>Use username</p>}
+                  {!method ? <p>Use Mac address</p> : <p>Use username</p>}
                   <div className="relative inline-block" onClick={handleRole}>
                     <input
                       className="peer h-6 w-12 cursor-pointer appearance-none rounded-full border border-gray-300 bg-gary-400 checked:border-green-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
