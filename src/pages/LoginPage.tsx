@@ -69,11 +69,11 @@ export default function LoginPage() {
         toast({ title: "Login Successful", description: "Welcome back!" }); // Show success toast
         navigate("/chat");
       } else {
-        toast({
-          title: "Login Failed",
-          description: "Invalid or Expired User.",
-          variant: "destructive",
-        });
+        // toast({
+        //   title: "Login Failed",
+        //   description: "Invalid or Expired User.",
+        //   variant: "destructive",
+        // });
       }
     }
   };
