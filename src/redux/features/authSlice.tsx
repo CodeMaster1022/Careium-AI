@@ -1,14 +1,12 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { User } from 'lucide-react';
 
 // Define the initial state using an interface
 interface User {
-    username: string;
-    macAddress: string;
-    password: string,
-    role: number
+    status: string;
+    message: string;
 }
-
 interface AuthState {
     user: User | null;
     isAuthenticated: boolean;
@@ -52,6 +50,7 @@ export const loginByRole = createAsyncThunk(
             const url = `https://billing.lol/private/app.php?reseller=${role}&login=${username}&password=${password}`;
             console.log("Requesting URL:", url);
             const response = await axios.post(url);
+            console.log(response.data)
             return response.data; // Assuming the response contains user data and token
         } catch (error) {
             console.error("Login error:", error);
