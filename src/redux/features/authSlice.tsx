@@ -4,7 +4,8 @@ import axios from 'axios';
 // Define the initial state using an interface
 interface User {
     username: string;
-    macaddress: string;
+    macAddress: string;
+    password: string
 }
 
 interface AuthState {
@@ -23,27 +24,20 @@ const initialState: AuthState = {
 };
 
 // Async thunk for user registration
-export const registerUser = createAsyncThunk(
-    'auth/register',
-    async (userData: { username: string; macaddress: string; password: string }, { rejectWithValue }) => {
-        try {
-            const response = await axios.post('/api/user/register', userData);
-            return response.data; // Assuming the response contains user data
-        } catch (error) {
-            return rejectWithValue(error)
-    }
-    }
-);
+
 
 // Async thunk for user login
-export const loginUser = createAsyncThunk(
+export const loginByMacAddress = createAsyncThunk(
     'auth/login',
-    async (credentials: { username: string; password: string }, { rejectWithValue }) => {
+    async (credentials: { macAddress: string; }, { rejectWithValue }) => {
         try {
-            console.log("==========>")
-            const response = await axios.post('http://127.0.0.1:4000/login', credentials);
+            const { macAddress } = credentials;
+            const url = `https://billing.lol/private/app.php?reseller=0&mac=${macAddress}`;
+            console.log("Requesting URL:", url);
+            const response = await axios.post(url);
             return response.data; // Assuming the response contains user data and token
         } catch (error) {
+            console.error("Login error:", error);
             return rejectWithValue(error);
         }
     }
@@ -61,27 +55,15 @@ const authSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(registerUser.pending, (state) => {
+            .addCase(loginByMacAddress.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(registerUser.fulfilled, (state, action: PayloadAction<User>) => {
-                state.loading = false;
-                state.isAuthenticated = true;
-                state.user = action.payload; // Save user data on successful registration
-            })
-            .addCase(registerUser.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload as string; // Handle error during registration
-            })
-            .addCase(loginUser.pending, (state) => {
-                state.loading = true;
-            })
-            .addCase(loginUser.fulfilled, (state, action: PayloadAction<User>) => {
+            .addCase(loginByMacAddress.fulfilled, (state, action: PayloadAction<User>) => {
                 state.loading = false;
                 state.isAuthenticated = true;
                 state.user = action.payload; // Save user data on successful login
             })
-            .addCase(loginUser.rejected, (state, action) => {
+            .addCase(loginByMacAddress.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string; // Handle error during login
             });
