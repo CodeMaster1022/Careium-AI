@@ -52,7 +52,7 @@ export default function LoginPage() {
             title: "Success!",
             description: "Successfully logged",
           });
-        } else {
+        } else if(user?.status == "fail"){
           toast({
             title: "Failed",
             description: "Invaild or Expired",
@@ -84,7 +84,7 @@ export default function LoginPage() {
               title: "Success",
               description: "Successfully logged",
             });
-          } else {
+          } else if(user?.status == "fail"){
             toast({
               title: "Failed",
               description: "Invaild or Expired",
