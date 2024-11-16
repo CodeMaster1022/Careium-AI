@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import TicketModal from "@/components/modal/TicketModal"
 
+
 interface Message {
   id: number
   content: string

@@ -1,11 +1,13 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { CreditCard } from 'lucide-react';
 
 // Define the initial state using an interface
 interface User {
     username: string;
     macAddress: string;
-    password: string
+    password: string,
+    role: number
 }
 
 interface AuthState {
@@ -42,7 +44,22 @@ export const loginByMacAddress = createAsyncThunk(
         }
     }
 );
-
+export const loginByRole = createAsyncThunk(
+    'auth/loginByRole',
+    async (credentials: { username: string; password: string; role: number; }, { rejectWithValue }) => {
+        try {
+            console.log(credentials.role,"----------");
+            const { username, password, role } = credentials;
+            const url = `https://billing.lol/private/app.php?reseller=${role}&login=${username}&password=${password}`;
+            console.log("Requesting URL:", url);
+            const response = await axios.post(url);
+            return response.data; // Assuming the response contains user data and token
+        } catch (error) {
+            console.error("Login error:", error);
+            return rejectWithValue(error);
+        }
+    }
+);
 // Create the auth slice
 const authSlice = createSlice({
     name: 'auth',
@@ -66,7 +83,20 @@ const authSlice = createSlice({
             .addCase(loginByMacAddress.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string; // Handle error during login
+            })
+            .addCase(loginByRole.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(loginByRole.fulfilled, (state, action: PayloadAction<User>) => {
+                state.loading = false;
+                state.isAuthenticated = true;
+                state.user = action.payload; // Save user data on successful login
+            })
+            .addCase(loginByRole.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string; // Handle error during login
             });
+
     },
 });
 
