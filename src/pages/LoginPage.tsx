@@ -53,11 +53,11 @@ export default function LoginPage() {
             description: "Successfully logged",
           });
         } else if(user?.status == "fail"){
-          toast({
-            title: "Failed",
-            description: "Invaild or Expired",
-            variant: "destructive"
-          });            
+          // toast({
+          //   title: "Failed",
+          //   description: "Invaild or Expired",
+          //   variant: "destructive"
+          // });            
         };
       }) // This should now work without error
     }
@@ -85,11 +85,11 @@ export default function LoginPage() {
               description: "Successfully logged",
             });
           } else if(user?.status == "fail"){
-            toast({
-              title: "Failed",
-              description: "Invaild or Expired",
-              variant: "destructive"
-            });            
+            // toast({
+            //   title: "Failed",
+            //   description: "Invaild or Expired",
+            //   variant: "destructive"
+            // });            
           }
         }); // This should now work without error
 
