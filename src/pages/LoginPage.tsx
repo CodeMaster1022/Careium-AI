@@ -16,8 +16,8 @@ export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const isAuthenticated = useSelector(
-    (state: RootState) => state.auth.isAuthenticated
+  const user = useSelector(
+    (state: RootState) => state.auth.user
   );
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -36,10 +36,10 @@ export default function LoginPage() {
       });
     } else {
       dispatch(loginByMacAddress(credentials)); // This should now work without error
-      if (isAuthenticated) {
+      if (user?.status == "success") {
         toast({ title: "Login Successful", description: "Welcome back!" }); // Show success toast
         navigate("/chat");
-      } else {
+      } else if (user?.status == "fail"){
         toast({
           title: "Login Failed",
           description: "Invalid or Expired MacAddress.",
@@ -65,15 +65,15 @@ export default function LoginPage() {
     } else {
       console.log(credentials, "--------------->");
       dispatch(loginByRole(credentials)); // This should now work without error
-      if (isAuthenticated) {
+      if (user?.status == "success") {
         toast({ title: "Login Successful", description: "Welcome back!" }); // Show success toast
         navigate("/chat");
-      } else {
-        // toast({
-        //   title: "Login Failed",
-        //   description: "Invalid or Expired User.",
-        //   variant: "destructive",
-        // });
+      } else if (user?.status == "fail") {
+        toast({
+          title: "Login Failed",
+          description: "Invalid or Expired User.",
+          variant: "destructive",
+        });
       }
     }
   };
