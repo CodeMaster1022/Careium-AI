@@ -9,8 +9,8 @@ import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import "../CSS/sendButton.css";
 export default function LoginPage() {
-  const [method, setMethod] = useState(0);
-  const [selectMember, setSelectMember] = useState(true);
+  const [method, setMethod] = useState(1);
+  const [selectMember, setSelectMember] = useState(false);
   const dispatch = useDispatch<AppDispatch>(); // Use typed dispatch
   const [macAddress, setMacAddress] = useState("");
   const [username, setUsername] = useState("");
