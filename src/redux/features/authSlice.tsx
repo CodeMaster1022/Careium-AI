@@ -34,6 +34,7 @@ export const loginByMacAddress = createAsyncThunk(
             const url = `https://billing.lol/private/app.php?reseller=0&mac=${macAddress}`;
             console.log("Requesting URL:", url);
             const response = await axios.post(url);
+            localStorage.setItem("user", JSON.stringify(response.data?.status));
             return response.data; // Assuming the response contains user data and token
         } catch (error) {
             console.error("Login error:", error);

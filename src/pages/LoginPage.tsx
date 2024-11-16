@@ -22,8 +22,18 @@ export default function LoginPage() {
   const { toast } = useToast();
   const navigate = useNavigate();
   useEffect(() => {
+    console.log(localStorage.getItem("user"),"user========>")
+    console.log(user);
+    
+    if(user){
+      if(user.status == 'success') {
+        navigate("/chat");
+      } else if(user.status == 'fail') {
+        navigate("/")
+      }
+    }
     console.log(macAddress, password);
-  }, [macAddress, password]);
+  }, [user]);
 
   const handleLoginByMacAddress = () => {
     const credentials = {
@@ -35,17 +45,21 @@ export default function LoginPage() {
         description: "Please enter the MacAddress",
       });
     } else {
-      dispatch(loginByMacAddress(credentials)); // This should now work without error
-      if (user?.status == "success") {
-        toast({ title: "Login Successful", description: "Welcome back!" }); // Show success toast
-        navigate("/chat");
-      } else if (user?.status == "fail"){
-        toast({
-          title: "Login Failed",
-          description: "Invalid or Expired MacAddress.",
-          variant: "destructive",
-        });
-      }
+      dispatch(loginByMacAddress(credentials))
+      .then(() => {
+        if(user?.status == "success"){
+          toast({
+            title: "Success!",
+            description: "Successfully logged",
+          });
+        } else {
+          toast({
+            title: "Failed",
+            description: "Invaild or Expired",
+            variant: "destructive"
+          });            
+        };
+      }) // This should now work without error
     }
   };
   const handleRole = () => {
@@ -63,18 +77,22 @@ export default function LoginPage() {
         description: "Please enter the Username and Password",
       });
     } else {
-      console.log(credentials, "--------------->");
-      dispatch(loginByRole(credentials)); // This should now work without error
-      if (user?.status == "success") {
-        toast({ title: "Login Successful", description: "Welcome back!" }); // Show success toast
-        navigate("/chat");
-      } else if (user?.status == "fail") {
-        toast({
-          title: "Login Failed",
-          description: "Invalid or Expired User.",
-          variant: "destructive",
-        });
-      }
+      dispatch(loginByRole(credentials))
+        .then(() => {
+          if(user?.status == "success"){
+            toast({
+              title: "Success",
+              description: "Successfully logged",
+            });
+          } else {
+            toast({
+              title: "Failed",
+              description: "Invaild or Expired",
+              variant: "destructive"
+            });            
+          }
+        }); // This should now work without error
+
     }
   };
 
