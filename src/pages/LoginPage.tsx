@@ -9,12 +9,17 @@ import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import "../CSS/sendButton.css";
 export default function LoginPage() {
+  interface User {
+    status: string,
+    message: string
+  }
   const [method, setMethod] = useState(1);
   const [selectMember, setSelectMember] = useState(false);
   const dispatch = useDispatch<AppDispatch>(); // Use typed dispatch
   const [macAddress, setMacAddress] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [flag, setFlag] = useState<User | null>(null);
 
   const user = useSelector(
     (state: RootState) => state.auth.user
@@ -22,18 +27,23 @@ export default function LoginPage() {
   const { toast } = useToast();
   const navigate = useNavigate();
   useEffect(() => {
-    console.log(localStorage.getItem("user"),"user========>")
-    console.log(user);
-    
-    if(user){
-      if(user.status == 'success') {
-        navigate("/chat");
-      } else if(user.status == 'fail') {
-        navigate("/")
-      }
+    if(user?.status == "success"){
+      toast({
+        title: "Success!",
+        description: "Successfully logged",
+      });
+
+      navigate("/chat");
+    } else if(user?.status == "fail"){
+      toast({
+        title: "Failed",
+        description: "Invaild or Expired",
+        variant: "destructive"
+      });            
+
+      navigate("/")
     }
-    console.log(macAddress, password);
-  }, [user]);
+  }, [user,flag]);
 
   const handleLoginByMacAddress = () => {
     const credentials = {
@@ -45,21 +55,11 @@ export default function LoginPage() {
         description: "Please enter the MacAddress",
       });
     } else {
-      dispatch(loginByMacAddress(credentials))
-      .then(() => {
-        if(user?.status == "success"){
-          toast({
-            title: "Success!",
-            description: "Successfully logged",
-          });
-        } else if(user?.status == "fail"){
-          // toast({
-          //   title: "Failed",
-          //   description: "Invaild or Expired",
-          //   variant: "destructive"
-          // });            
-        };
-      }) // This should now work without error
+      try{
+        dispatch(loginByMacAddress(credentials))    
+      } catch(e){
+        console.log(e);
+      }
     }
   };
   const handleRole = () => {
@@ -77,22 +77,12 @@ export default function LoginPage() {
         description: "Please enter the Username and Password",
       });
     } else {
-      dispatch(loginByRole(credentials))
-        .then(() => {
-          if(user?.status == "success"){
-            toast({
-              title: "Success",
-              description: "Successfully logged",
-            });
-          } else if(user?.status == "fail"){
-            // toast({
-            //   title: "Failed",
-            //   description: "Invaild or Expired",
-            //   variant: "destructive"
-            // });            
-          }
-        }); // This should now work without error
-
+      try{
+        dispatch(loginByRole(credentials))
+    }
+     catch(e){
+        console.log(e);
+      }
     }
   };
 
