@@ -22,17 +22,22 @@ export default function LoginPage() {
   const { toast } = useToast();
   const navigate = useNavigate();
   useEffect(() => {
-    console.log(localStorage.getItem("user"),"user========>")
-    console.log(user);
-    
-    if(user){
-      if(user.status == 'success') {
-        navigate("/chat");
-      } else if(user.status == 'fail') {
-        navigate("/")
-      }
+    if(user?.status == "success"){
+      toast({
+        title: "Success!",
+        description: "Successfully logged",
+      });
+
+      navigate("/chat");
+    } else if(user?.status == "fail"){
+      toast({
+        title: "Failed",
+        description: "Invaild or Expired",
+        variant: "destructive"
+      });            
+
+      navigate("/")
     }
-    console.log(macAddress, password);
   }, [user]);
 
   const handleLoginByMacAddress = () => {
@@ -45,21 +50,11 @@ export default function LoginPage() {
         description: "Please enter the MacAddress",
       });
     } else {
-      dispatch(loginByMacAddress(credentials))
-      .then(() => {
-        if(user?.status == "success"){
-          toast({
-            title: "Success!",
-            description: "Successfully logged",
-          });
-        } else if(user?.status == "fail"){
-          // toast({
-          //   title: "Failed",
-          //   description: "Invaild or Expired",
-          //   variant: "destructive"
-          // });            
-        };
-      }) // This should now work without error
+      try{
+        dispatch(loginByMacAddress(credentials))    
+      } catch(e){
+        console.log(e);
+      }
     }
   };
   const handleRole = () => {
@@ -77,22 +72,12 @@ export default function LoginPage() {
         description: "Please enter the Username and Password",
       });
     } else {
-      dispatch(loginByRole(credentials))
-        .then(() => {
-          if(user?.status == "success"){
-            toast({
-              title: "Success",
-              description: "Successfully logged",
-            });
-          } else if(user?.status == "fail"){
-            // toast({
-            //   title: "Failed",
-            //   description: "Invaild or Expired",
-            //   variant: "destructive"
-            // });            
-          }
-        }); // This should now work without error
-
+      try{
+        dispatch(loginByRole(credentials))
+    }
+     catch(e){
+        console.log(e);
+      }
     }
   };
 
