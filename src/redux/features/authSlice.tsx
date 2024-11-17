@@ -48,7 +48,7 @@ export const loginByLogin = createAsyncThunk(
         try {
             console.log(credentials.role,"----------");
             const { username, password, role } = credentials;
-            const url = `https://billing.lol/private/app.php?reseller=${role}&username=${username}&password=${password}`;
+            const url = `https://billing.lol/private/app.php?reseller=1&login=${username}&password=${password}`;
             console.log(url)
             const response = await axios.post(url, {
                 params:{
@@ -69,9 +69,10 @@ export const loginByUsername = createAsyncThunk(
     'auth/loginByUsername',
     async (credentials: { username: string; password: string; role: number; }, { rejectWithValue }) => {
         try {
-            console.log(credentials.role,"----------");
+            
             const { username, password, role } = credentials;
-            const url = `https://billing.lol/private/app.php?reseller=${role}&login=${username}&password=${password}`;
+            console.log(role,"----------");
+            const url = `https://billing.lol/private/app.php?reseller=0&username=${username}&password=${password}`;
             console.log(url)
             const response = await axios.post(url);
             console.log(response.data)
