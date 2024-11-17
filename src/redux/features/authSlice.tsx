@@ -31,7 +31,7 @@ export const loginByMacAddress = createAsyncThunk(
     async (credentials: { macAddress: string; }, { rejectWithValue }) => {
         try {
             const { macAddress } = credentials;
-            const url = `https://billing.lol/private/app.php?reseller=1&mac=${macAddress}`;
+            const url = `https://billing.lol/private/app.php?reseller=0&mac=${macAddress}`;
             const response = await axios.post(url);
             console.log(url)
             localStorage.setItem("user", JSON.stringify(response.data?.status));
