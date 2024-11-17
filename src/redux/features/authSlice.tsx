@@ -33,7 +33,7 @@ export const loginByMacAddress = createAsyncThunk(
             const { macAddress } = credentials;
             const url = `https://billing.lol/private/app.php?reseller=0&mac=${macAddress}`;
             const response = await axios.post(url);
-            console.log(url)
+            
             localStorage.setItem("user", JSON.stringify(response.data?.status));
             return response.data; // Assuming the response contains user data and token
         } catch (error) {
@@ -49,14 +49,8 @@ export const loginByLogin = createAsyncThunk(
             console.log(credentials.role,"----------");
             const { username, password, role } = credentials;
             const url = `https://billing.lol/private/app.php?reseller=1&username=${username}&password=${password}`;
-            console.log(url)
-            const response = await axios.post(url, {
-                params:{
-                    reseller: role,
-                    login: username,
-                    password: password
-                }
-            });
+            console.log(url, role)
+            const response = await axios.post(url);
             console.log(response.data)
             return response.data; // Assuming the response contains user data and token
         } catch (error) {
@@ -73,7 +67,7 @@ export const loginByUsername = createAsyncThunk(
             const { username, password, role } = credentials;
             console.log(role,"----------");
             const url = `https://billing.lol/private/app.php?reseller=0&login=${username}&password=${password}`;
-            console.log(url)
+            
             const response = await axios.post(url);
             console.log(response.data)
             return response.data; // Assuming the response contains user data and token
