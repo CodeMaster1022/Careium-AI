@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import "../CSS/sendButton.css";
 export default function LoginPage() {
   const [method, setMethod] = useState(1);
-  const [selectMember, setSelectMember] = useState(0);
+  const [selectMember, setSelectMember] = useState(1);
   const dispatch = useDispatch<AppDispatch>(); // Use typed dispatch
   const [macAddress, setMacAddress] = useState("");
   const [username, setUsername] = useState("");
@@ -126,10 +126,10 @@ export default function LoginPage() {
               <label className="flex cursor-pointer items-center justify-between p-1 text-slate-400">
                 {selectMember ? (
                   <>
-                    <p>Switch reseller</p>
+                    <p>Customer Mode</p>
                   </>
                 ) : (
-                  <p>Switch customer</p>
+                  <p>Reseller Mode</p>
                 )}
                 <div
                   className="relative inline-block"
@@ -164,7 +164,7 @@ export default function LoginPage() {
                     className="inline-block cursor-pointer rounded-md bg-gray-700 px-4 py-3.5 text-center text-sm font-semibold uppercase text-white transition duration-200 ease-in-out hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-700 focus-visible:ring-offset-2 active:scale-95"
                     onClick={handleLoginByRole}
                   >
-                    LoginByName
+                    Login by name
                   </button>
                 </>
               ) : (
@@ -173,7 +173,7 @@ export default function LoginPage() {
                     className="inline-block cursor-pointer rounded-md bg-gray-700 px-4 py-3.5 text-center text-sm font-semibold uppercase text-white transition duration-200 ease-in-out hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-700 focus-visible:ring-offset-2 active:scale-95"
                     onClick={handleLoginByMacAddress}
                   >
-                    LoginByMacAddress
+                    LoginBy MacAddress
                   </button>
                 </>
               )}
