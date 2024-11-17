@@ -74,7 +74,7 @@ export default function LoginPage() {
       });
     } else {
       try{
-        if(selectMember == 0){
+        if(selectMember == 1){
           dispatch(loginByUsername(credentials))
         } else {
           dispatch(loginByLogin(credentials))
