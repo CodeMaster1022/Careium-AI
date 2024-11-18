@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
-import Select from 'react-tailwindcss-select'
 import { Button } from '@/components/ui/button'
 import Multiselect from 'multiselect-react-dropdown';
 
