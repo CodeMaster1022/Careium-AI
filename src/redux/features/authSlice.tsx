@@ -3,6 +3,7 @@ import axios from 'axios';
 import { User } from 'lucide-react';
 
 // Define the initial state using an interface
+const userinfo = localStorage.getItem('userinfo');
 interface User {
     status: string;
     message: string;
@@ -11,6 +12,7 @@ interface AuthState {
     user: User | null;
     isAuthenticated: boolean;
     loading: boolean;
+    userInfo: string | null;
     error: string | null;
 }
 
@@ -20,6 +22,7 @@ const initialState: AuthState = {
     isAuthenticated: false,
     loading: false,
     error: null,
+    userInfo: userinfo,
 };
 
 // Async thunk for user registration
@@ -34,7 +37,7 @@ export const loginByMacAddress = createAsyncThunk(
             const url = `https://billing.lol/private/app.php?reseller=0&mac=${macAddress}`;
             const response = await axios.post(url);
             
-            localStorage.setItem("user", JSON.stringify(response.data?.status));
+            localStorage.setItem("userinfo", response.data?.status);
             return response.data; // Assuming the response contains user data and token
         } catch (error) {
             console.error("Login error:", error);
@@ -51,7 +54,8 @@ export const loginByLogin = createAsyncThunk(
             const url = `https://billing.lol/private/app.php?reseller=1&username=${username}&password=${password}`;
             console.log(url, role)
             const response = await axios.post(url);
-            console.log(response.data)
+            localStorage.setItem("userinfo", response.data?.status);
+            console.log(localStorage.getItem('userinfo'))
             return response.data; // Assuming the response contains user data and token
         } catch (error) {
             console.error("Login error:", error);
@@ -69,7 +73,8 @@ export const loginByUsername = createAsyncThunk(
             const url = `https://billing.lol/private/app.php?reseller=0&login=${username}&password=${password}`;
             
             const response = await axios.post(url);
-            console.log(response.data)
+            console.log(response.data?.status,'---------->>>')
+            localStorage.setItem("userinfo", response.data?.status);
             return response.data; // Assuming the response contains user data and token
         } catch (error) {
             console.error("Login error:", error);
@@ -84,6 +89,7 @@ const authSlice = createSlice({
     reducers: {
         logout(state) {
             state.user = null;
+            localStorage.removeItem('userinfo')
             state.isAuthenticated = false;
         },
     },
@@ -96,6 +102,7 @@ const authSlice = createSlice({
                 state.loading = false;
                 state.isAuthenticated = true;
                 state.user = action.payload; // Save user data on successful login
+                state.userInfo = localStorage.getItem('userinfo')
             })
             .addCase(loginByMacAddress.rejected, (state, action) => {
                 state.loading = false;
@@ -108,6 +115,7 @@ const authSlice = createSlice({
                 state.loading = false;
                 state.isAuthenticated = true;
                 state.user = action.payload; // Save user data on successful login
+                state.userInfo = localStorage.getItem('userinfo')
             })
             .addCase(loginByUsername.rejected, (state, action) => {
                 state.loading = false;
@@ -120,6 +128,7 @@ const authSlice = createSlice({
                 state.loading = false;
                 state.isAuthenticated = true;
                 state.user = action.payload; // Save user data on successful login
+                state.userInfo = localStorage.getItem('userinfo')
             })
             .addCase(loginByLogin.rejected, (state, action) => {
                 state.loading = false;

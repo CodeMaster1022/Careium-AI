@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import TicketModal from "@/components/modal/TicketModal"
-
-
+import { useDispatch } from "react-redux"
+import { logout } from "@/redux/features/authSlice"
+import { useNavigate } from "react-router-dom"
 interface Message {
   id: number
   content: string
@@ -19,7 +20,6 @@ interface Ticket {
   messages: Message[]
   isSelected: boolean
 }
-
 export default function Component() {
   const [tickets, setTickets] = useState<Ticket[]>([
     {
@@ -63,7 +63,13 @@ export default function Component() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   const selectedTicket = tickets.find((ticket) => ticket.isSelected)
-
+  
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/");
+  }
   const handleSendMessage = () => {
     if (!newMessage.trim() || !selectedTicket) return
 
@@ -88,11 +94,9 @@ export default function Component() {
     setTickets(updatedTickets)
     setNewMessage("")
   }
-
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen)
   }
-
   return (
     <div className="flex w-full justify-center bg-[#181818]">
       <div className="flex h-screen w-full max-w-[1440px]">
@@ -128,7 +132,7 @@ export default function Component() {
         {/* Main Content */}
         <div className={`${isSidebarOpen ? 'hidden' : 'block'} flex flex-1 flex-col bg-[url('./assets/1.jpg')] bg-cover bg-center`}>
           {/* Header */}
-          <div className="h-16 bg-[#212121] border-[black] border-l border-border flex items-center px-4">
+          <div className="h-16 bg-[#212121] border-[black] border-l border-border flex items-center px-4 w-full justify-between">
             <Button
               className="md:hidden mr-2"
               variant="ghost"
@@ -149,6 +153,9 @@ export default function Component() {
             <h1 className="text-xl font-bold text-white">
               {selectedTicket ? `Ticket #${selectedTicket.id}` : 'Select a ticket'}
             </h1>
+            <div className="mr-0">
+              <Button className=" hover:bg-green-400" onClick={handleLogout}>Logout</Button>
+            </div>
           </div>
 
           {/* Messages */}
