@@ -1,22 +1,20 @@
-// import { useSelector } from "react-redux";
-// import { Outlet, useNavigate } from "react-router-dom";
-// import { useEffect } from "react";
-// import { RootState } from "@/redux/store";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { RootState } from "@/redux/store";
+import { useSelector } from "react-redux";
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+    const userinfo = useSelector(
+        (state: RootState) => state.auth.userInfo
+    );
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (userinfo !== "success") {
+            console.log(userinfo, "-sdfsdfds------------->");
+        console.log(userinfo);
+        navigate("/");
+        }
+    }, []);
+    return <div>{children}</div>;
+};
 
-// const ProtectedRoute = () => {
-//     const userinfo = useSelector(
-//         (state: RootState) => state.auth.userInfo
-//     );
-//     const navigate = useNavigate();
-//     useEffect(()=>{
-//         // const userinfo = localStorage.getItem("userinfo");
-//         console.log(userinfo, "-------------->")
-//         if(userinfo !== 'success') {
-//             console.log(userinfo);
-//         navigate("/chat");
-//     }
-// }, [])
-//     return <Outlet />
-// }
-
-// export default ProtectedRoute
+export default ProtectedRoute;
