@@ -3,7 +3,7 @@ import ChatPage from "./pages/ChatPage";
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import store from "./redux/store";
 import { Provider } from "react-redux";
-import ProtectedRoute from "./routing/Layout";
+import ProtectedRoute from "./routing/ProtectedRoute";
 function App() {
   return (
     <Provider store={store}>
