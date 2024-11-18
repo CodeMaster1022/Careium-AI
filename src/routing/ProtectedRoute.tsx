@@ -9,7 +9,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     const navigate = useNavigate();
     useEffect(() => {
         if (userinfo !== "success") {
-            console.log(userinfo, "-sdfsdfds------------->");
         console.log(userinfo);
         navigate("/");
         }
