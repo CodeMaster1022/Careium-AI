@@ -35,10 +35,8 @@ export default function LoginPage() {
         description: user?.message,
         variant: "destructive"
       });            
-
-      navigate("/")
     }
-  }, [user]);
+  }, [user?.status, navigate]);
 
   const handleLoginByMacAddress = () => {
     const credentials = {
