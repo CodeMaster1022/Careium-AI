@@ -27,7 +27,6 @@ export default function LoginPage() {
         title: "Success!",
         description: "Successfully logged",
       });
-
       navigate("/chat");
     } else if(user?.status == "fail"){
       toast({
@@ -50,6 +49,7 @@ export default function LoginPage() {
       });
     } else {
       try{
+        localStorage.setItem('username',macAddress);
         dispatch(loginByMacAddress(credentials))    
       } catch(e){
         console.log(e);
@@ -72,6 +72,7 @@ export default function LoginPage() {
       });
     } else {
       try{
+        localStorage.setItem('username', username);
         if(selectMember == 1){
           dispatch(loginByUsername(credentials))
         } else {
