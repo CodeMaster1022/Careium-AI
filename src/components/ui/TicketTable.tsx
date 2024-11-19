@@ -1,5 +1,9 @@
 import React from 'react';
 import { Button } from '@/components/ui/button'
+import { useDispatch } from "react-redux"
+import { stopTicket } from '@/redux/features/ticketSlice';
+import { AppDispatch } from "../../redux/store";
+
 interface Ticket {
     _id: string;
     createdBy: string;
@@ -19,6 +23,15 @@ interface TicketTableProps {
 }
 
 const TicketTable: React.FC<TicketTableProps> = ({ tickets }) => {
+
+    const dispatch = useDispatch<AppDispatch>();
+    const handleStopTicket = (ticketnumber:number) => {
+        console.log("=====>")
+        const data = {
+            ticketNumber: ticketnumber
+        }
+        dispatch(stopTicket(data))
+    }
     return (
         <div className="overflow-x-auto">
             <table className="min-w-full bg-white border border-gray-200">
@@ -50,7 +63,7 @@ const TicketTable: React.FC<TicketTableProps> = ({ tickets }) => {
                                 {
                                     ticket.status  == 'stop'? 
                                     (<Button disabled={true}>Stop</Button>):
-                                    (<Button >Stop</Button>)
+                                    (<Button onClick={()=>handleStopTicket(ticket.ticketNumber)}>Stop</Button>)
                                 }
                                 </td>
                         </tr>

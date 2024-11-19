@@ -2,7 +2,8 @@ import  { useEffect, useState } from 'react';
 import TicketTable from '@/components/ui/TicketTable'; // Ensure this path is correct
 import Pagination from '@/components/ui/Pagination';
 import api from '@/services/api';
-
+import {  useSelector } from "react-redux"
+import { RootState } from "../redux/store";
 // interface Message {
 //     _id: string;
 //     ticketId: string;
@@ -36,7 +37,9 @@ const AdminPage = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const itemsPerPage = 20; // Number of items to display per page
     const [tickets, setTickets] = useState<Ticket[]>([]);
-
+    const loading = useSelector(
+        (state: RootState) => state.ticket.loading
+      );
     useEffect(() => {
         const fetchTickets = async () => {
             try {
@@ -47,7 +50,7 @@ const AdminPage = () => {
             }
         };
         fetchTickets();
-    }, []);
+    }, [loading]);
 useEffect(()=>{
     if(tickets){
         tickets.map((item)=>(
