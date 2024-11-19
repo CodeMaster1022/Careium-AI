@@ -57,7 +57,6 @@ export default function Component() {
     (state: RootState) => state.ticket.loading
   );
   useEffect(() => {
-    console.log('isaddedf', isloading)
     const fetchTickets = async () => {
       try {
         const response = await api.post('/tickets/getMessage', { username })

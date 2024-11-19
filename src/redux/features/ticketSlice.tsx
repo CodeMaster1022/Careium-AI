@@ -76,6 +76,20 @@ export const getTicketMessage = createAsyncThunk(
         }
     }
 );
+export const stopTicket = createAsyncThunk(
+    'ticket/stopTicket',
+    async (credentials: { ticketNumber: number}, { rejectWithValue }) => {
+        try {
+            console.log(credentials,"----------");
+            const url = `/tickets/stopTicket`;
+            const response = await api.post(url, credentials);
+            return response.data; // Assuming the response contains user data and token
+        } catch (error) {
+            console.error("Login error:", error);
+            return rejectWithValue(error);
+        }
+    }
+);
 export const createTicktes = createAsyncThunk(
     'ticket/createTicktes',
     async (credentials:credentials, { rejectWithValue }) => {
@@ -119,7 +133,18 @@ const ticketSlice = createSlice({
             .addCase(createTicktes.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string; // Handle error during login
-            })          
+            }) 
+            .addCase(stopTicket.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(stopTicket.fulfilled, (state) => {
+                console.log('======================>, is fullfiled')
+                state.loading = false;
+            })
+            .addCase(stopTicket.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string; // Handle error during login
+            })                
     },
 });
 
