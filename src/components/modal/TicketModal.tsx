@@ -2,24 +2,27 @@ import React, { useState } from 'react'
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import { Button } from '@/components/ui/button'
 import Multiselect from 'multiselect-react-dropdown';
-
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/store";
+import { createTicktes } from '@/redux/features/ticketSlice';
+import { useToast } from "@/hooks/use-toast";
 interface Option {
-  id: number
+  id: Number
   name: string
 }
 
 interface Content {
-  id: number
+  id: Number
   name: string
 }
 
 interface Channel {
-  id: number
+  id: Number
   name: string
 }
 
 interface Server {
-  id: number
+  id: Number
   name: string
 }
 
@@ -29,11 +32,9 @@ interface TicketModalProps {
 }
 
 const contents: Content[] = [
-  { id: 1, name: 'Durward Reynolds' },
-  { id: 2, name: 'Kenton Towne' },
-  { id: 3, name: 'Therese Wunsch' },
-  { id: 4, name: 'Benedict Kessler' },
-  { id: 5, name: 'Katelyn Rohan' },
+  { id: 1, name: 'Live channels' },
+  { id: 2, name: 'Other issues' },
+  { id: 3, name: 'Video' },
 ]
 
 const servers: Server[] = [
@@ -65,28 +66,88 @@ const options: Option[] = [
 
 const TicketModal: React.FC<TicketModalProps> = ({ option, handleClose }) => {
   const [selectedOption, setSelectedOption] = useState<Option[]>([])
-  // const [selectedContent, setSelectedContent] = useState<Content[]>([])
+  const [addoption, setAddOption] = useState<string[]>([]);
+  const [selectedContent, setSelectedContent] = useState<string>('Live channels')
   const [selectedChannel, setSelectedChannel] = useState<Channel []>([])
+  const dispatch = useDispatch<AppDispatch>(); // Use typed dispatch
+  const [addchannel, setAddChannel] = useState<string[]>([]);
+  const [description, setDescription] = useState("");
+  const [server, SetServer] = useState<string>('tzv1');
+  const { toast } = useToast();
+  const credentials = {
+    createdBy:"00:1A:79:89:23:11",
+    server: server,
+    content: selectedContent,
+    issues: addoption,
+    problems: addchannel,
+    description: description,
+  }
+  // useEffect(()=>{
+  //   console.log(data);
+  // },[data])
 
+  // const isAdded = useSelector(
+  //   (state: RootState) => state.ticket.isAdded
+  // );
+  // const error = useSelector(
+  //   (state: RootState) => state.ticket.error
+  // );
+  // useEffect(()=>{
+  //   console.log(isAdded,'isadded');
+  //   if(isAdded){
+  //     toast({
+  //     title: "Success!",
+  //     description: "Successfully Created!",
+  //   });
+  //   handleClose()         
+  // } else if (error) {
+  //   toast({
+  //     title: "Failed!",
+  //     description: "Ticket was not created!",
+  //     variant: "destructive"
+  //   });
+  // }
+  // },[isAdded])
+  const createTicket = async() => {
+    if(selectedContent != '' && selectedChannel.length > 0 && addoption.length > 0 && addchannel.length > 0){
+      try{
+        dispatch(createTicktes(credentials));
+        handleClose();
+        // const response =await axios.post('http://localhost:3000/api/tickets/createTicket',data);
+      } catch (e) {
+        console.log(e);
+      }
+    } else {
+      toast({
+        title: "Failed!",
+        description: "Please select all options",
+        variant: "destructive"
+      });
+    }
+  }
   const onSelect = (selectedList: Option[], selectedItem: Option) => {
     setSelectedOption(selectedList);
-    console.log('Selected Item:', selectedItem);
-    console.log('Selected List:', selectedList);
+    console.log('Selected Item:-----', selectedItem);
+    const selectedIds = selectedList.map(option => option.name);
+    setAddOption(selectedIds);
   }
   const onRemove = (selectedList: Option[], removedItem: Option) => {
     setSelectedOption(selectedList);
-    console.log('Removed Item:', removedItem);
-    console.log('Selected List after removal:', selectedList);
+    const selectedIds = selectedList.map(option => option.name);
+    setAddOption(selectedIds);
+    console.log('Removed Item:---------', removedItem);
   };
   const onChannelSelect = (selectedList: Channel[], selectedItem: Channel) => {
     setSelectedChannel(selectedList);
+    const selectedIds = selectedList.map(option => option.name);
+    setAddChannel(selectedIds);
     console.log('Selected Item:', selectedItem);
-    console.log('Selected List:', selectedList);
   }
   const onChannelRemove = (selectedList: Channel[], removedItem: Channel) => {
     setSelectedChannel(selectedList);
+    const selectedIds = selectedList.map(option => option.name);
+    setAddChannel(selectedIds);
     console.log('Removed Item:', removedItem);
-    console.log('Selected List after removal:', selectedList);
   };
   // const handleChange = (value: any) => {
   //   setSelectedOption(value)
@@ -107,9 +168,10 @@ const TicketModal: React.FC<TicketModalProps> = ({ option, handleClose }) => {
                 id="server"
                 className="appearance-none w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 aria-label="Select the server"
+                onChange={(e)=>SetServer(e.target.value)}
               >
                 {servers.map((server) => (
-                  <option key={server.id} value={server.name}>
+                  <option value={server.name}>
                     {server.name}
                   </option>
                 ))}
@@ -117,15 +179,16 @@ const TicketModal: React.FC<TicketModalProps> = ({ option, handleClose }) => {
             </div>
             <div className="relative">
               <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
-                Select Content
+                Select Content Type
               </label>
               <select
                 id="content"
                 className="appearance-none w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 aria-label="Select the content"
+                onChange={(e)=>setSelectedContent(e.target.value)}
               >
                 {contents.map((content) => (
-                  <option key={content.id} value={content.name}>
+                  <option value={content.name}>
                     {content.name}
                   </option>
                 ))}
@@ -133,50 +196,20 @@ const TicketModal: React.FC<TicketModalProps> = ({ option, handleClose }) => {
             </div>
             <div>
               <label htmlFor="options" className="block text-sm font-medium text-gray-700 mb-1">
-                Select Options
+                Select issues
               </label>
               <Multiselect options={options} selectedValues={selectedOption} onRemove={onRemove} onSelect={onSelect} displayValue='name'/>
             </div>
             <div>
               <label htmlFor="channels" className="block text-sm font-medium text-gray-700 mb-1">
-                Select Channels
+                Select problematic channel
               </label>
               <Multiselect options={channels} selectedValues={selectedChannel} onRemove={onChannelRemove} onSelect={onChannelSelect} displayValue='name'/>
-              {/* <Select
-                value={selectedChannel}
-                onChange={handleChannelChange}
-                options={channels}
-                isMultiple={true}
-                isSearchable={true}
-                primaryColor={"indigo"}
-                classNames={{
-                  menuButton: (value:any) =>{
-                    const isSelected = value?.isSelected;
-                    return  `flex text-sm px-3 py-0 text-gray-500 border border-gray-300 rounded shadow-sm transition-all duration-300 focus:outline-none ${
-                        isSelected
-                        ? "bg-gray-200"
-                        : "bg-white hover:border-gray-400 focus:border-blue-500 focus:ring focus:ring-blue-500/20"
-                    }`;
-                },
-                  menu: "absolute z-10 w-full bg-white shadow-lg border rounded py-1 mt-1.5 text-xs text-gray-700",
-                  listItem: (value:any) => {
-                    const isSelected = value?.isSelected;
-                    return `block transition duration-200 px-2 py-2 cursor-pointer select-none truncate rounded ${
-                        isSelected
-                        ? "text-white bg-blue-500"
-                        : "text-gray-500 hover:bg-blue-100 hover:text-blue-500"
-                    }`;
-                },
-                  searchBox:
-                    "w-full py-2 pl-8 text-sm text-gray-500 bg-gray-100 border border-gray-200 rounded focus:border-gray-200 focus:ring-0 focus:outline-none",
-                  searchIcon:
-                    "absolute w-4 h-4 mt-2.5 ml-2 text-gray-500",
-                }}
-              /> */}
             </div>
+            <textarea className='w-full border border-gray-300 rounded-md focus:border-none' onChange={(e)=>setDescription(e.target.value)}/>
           </div>
           <div className="flex justify-end pt-4">
-            <Button onClick={handleClose}>Submit</Button>
+            <Button onClick={createTicket}>Submit</Button>
           </div>
         </DialogPanel>
       </div>

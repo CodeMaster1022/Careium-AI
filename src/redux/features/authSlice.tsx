@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { User } from 'lucide-react';
+// import { User } from 'lucide-react';
 
 // Define the initial state using an interface
 const userinfo = localStorage.getItem('userinfo');

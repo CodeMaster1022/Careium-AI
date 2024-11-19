@@ -1,131 +1,162 @@
 'use client'
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import TicketModal from "@/components/modal/TicketModal"
-import { useDispatch } from "react-redux"
 import { logout } from "@/redux/features/authSlice"
-import { useNavigate } from "react-router-dom"
+import { RootState } from '@/redux/store';
+import api from "@/services/api"
+import io from 'socket.io-client'
+import '../CSS/createButton.css'
+
 interface Message {
-  id: number
+  _id: string
+  ticketId: string
   content: string
-  timestamp: string
-  isOutgoing: boolean
+  sender: string
+  ticketNumber: string
+  createdAt: string
+  updatedAt: string
 }
 
 interface Ticket {
-  id: string
-  messages: Message[]
-  isSelected: boolean
+  _id: string
+  createdBy: string
+  server: string
+  content: string
+  issues: string[]
+  problems: string[]
+  description: string
+  status: string
+  ticketNumber: string
+  createdAt: string
+  updatedAt: string
 }
+
+interface TicketData {
+  ticket: Ticket
+  messages: Message[]
+}
+
+const socket = io('http://localhost:3000/');
 export default function Component() {
-  const [tickets, setTickets] = useState<Ticket[]>([
-    {
-      id: "503",
-      messages: [],
-      isSelected: false,
-    },
-    {
-      id: "279",
-      messages: [
-        {
-          id: 1,
-          content: "First test",
-          timestamp: "11:58 AM",
-          isOutgoing: true,
-        },
-        {
-          id: 2,
-          content: "you are in",
-          timestamp: "11:58 AM",
-          isOutgoing: false,
-        },
-        {
-          id: 3,
-          content: "Hi",
-          timestamp: "12:05 PM",
-          isOutgoing: true,
-        },
-        {
-          id: 4,
-          content: "yeah,",
-          timestamp: "12:05 PM",
-          isOutgoing: false,
-        },
-      ],
-      isSelected: true,
-    },
-  ])
+  const [tickets, setTickets] = useState<TicketData[]>([])
   const [newMessage, setNewMessage] = useState("")
   const [isOpen, setIsOpen] = useState(false)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null)
 
-  const selectedTicket = tickets.find((ticket) => ticket.isSelected)
-  
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const username = localStorage.getItem('username')
+  const dispatch = useDispatch()
+  const router = useNavigate()
+  const isloading = useSelector(
+    (state: RootState) => state.ticket.loading
+  );
+  useEffect(() => {
+    const fetchTickets = async () => {
+      try {
+        const response = await api.post('/tickets/getMessage', { username })
+        setTickets(response.data)
+      } catch (error) {
+        console.error('Error fetching tickets:', error)
+      }
+    }
+    fetchTickets()
+    
+    socket.on('connect', () => {
+      console.log('Connected to server')
+    })  
+
+    socket.on('newMessage', (message: Message) => {
+      console.log(message);
+      setTickets(prevTickets => 
+        prevTickets.map(ticketData => 
+          ticketData.ticket._id === message.ticketId
+            ? { ...ticketData, messages: [...ticketData.messages, message] }
+            : ticketData
+        )
+      )
+    })
+    console.log("======>")
+    return () => {
+      socket.off('connect')
+      socket.off('newMessage')
+    }
+  }, [username, isloading])
+  useEffect(()=>{
+    console.log(tickets);
+  }, [tickets])
+
+  const selectedTicket = tickets.find((ticket) => ticket.ticket._id === selectedTicketId)
+
   const handleLogout = () => {
-    dispatch(logout());
-    navigate("/");
+    dispatch(logout())
+    router("/")
   }
-  const handleSendMessage = () => {
+
+  const handleSendMessage = async () => {
     if (!newMessage.trim() || !selectedTicket) return
 
-    const updatedTickets = tickets.map((ticket) => {
-      if (ticket.id === selectedTicket.id) {
-        return {
-          ...ticket,
-          messages: [
-            ...ticket.messages,
-            {
-              id: ticket.messages.length + 1,
-              content: newMessage,
-              timestamp: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true }),
-              isOutgoing: false,
-            },
-          ],
-        }
+    try {
+      const messageData = {
+        ticketId: selectedTicket.ticket._id,
+        content: newMessage,
+        sender: "user",
+        ticketNumber: selectedTicket.ticket.ticketNumber
       }
-      return ticket
-    })
+      console.log(messageData);
+      socket.emit('sendMessage', messageData);
+      setNewMessage("");
+    } catch (error) {
+      console.error('Error sending message:', error)
+    }
+  }
 
-    setTickets(updatedTickets)
-    setNewMessage("")
-  }
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen)
-  }
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen)
+
   return (
     <div className="flex w-full justify-center bg-[#181818]">
       <div className="flex h-screen w-full max-w-[1440px]">
         {/* Sidebar */}
         <div className={`${isSidebarOpen ? 'block' : 'hidden'} md:block w-full md:w-96 bg-[#212121] overflow-y-auto`}>
           <div className="p-4 h-full">
-            <h2 className="mb-4 text-2xl font-bold text-blue-500">My tickets</h2>
-            {tickets.map((ticket) => (
+            <div className="flex justify-between mb-2">
+              <h2 className="mb-4 text-2xl font-bold text-blue-500">My tickets</h2>
+              <button className="button" onClick={()=>setIsOpen(true)}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="1.25rem"
+                  height="1.25rem"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                >
+                  <path d="M12 19v-7m0 0V5m0 7H5m7 0h7"></path>
+                </svg>
+                Create
+              </button>
+            </div>
+            {tickets.map((ticketData) => (
               <div
-                key={ticket.id}
-                className={`mb-2 cursor-pointer rounded-lg p-4 ${
-                  ticket.isSelected ? "bg-[#8774E1] text-primary-foreground" : "hover:bg-muted text-white"
+                key={ticketData.ticket._id}
+                className={`mt-1 cursor-pointer text-white rounded-lg p-4 ${
+                  ticketData.ticket._id === selectedTicketId ? "bg-[#8774E1] text-primary-foreground" : "hover:bg-green-400"
                 }`}
                 onClick={() => {
-                  setTickets(
-                    tickets.map((t) => ({
-                      ...t,
-                      isSelected: t.id === ticket.id,
-                    }))
-                  )
-                  setIsSidebarOpen(false) // Close sidebar on mobile after selection
+                  setSelectedTicketId(ticketData.ticket._id)
+                  setIsSidebarOpen(false)
                 }}
               >
-                Ticket #{ticket.id}
+                Ticket #{ticketData.ticket.ticketNumber}
               </div>
             ))}
-            <Button className="mt-4 w-full" variant="secondary" onClick={() => setIsOpen(true)}>
-              CREATE NEW TICKET
-            </Button>
           </div>
         </div>
 
@@ -151,30 +182,30 @@ export default function Component() {
               </svg>
             </Button>
             <h1 className="text-xl font-bold text-white">
-              {selectedTicket ? `Ticket #${selectedTicket.id}` : 'Select a ticket'}
+              {selectedTicket ? `Ticket #${selectedTicket.ticket.ticketNumber}` : 'Select a ticket'}
             </h1>
-            <div className="mr-0">
-              <Button className=" hover:bg-green-400" onClick={handleLogout}>Logout</Button>
-            </div>
+            <Button className="hover:bg-green-400" onClick={handleLogout}>Logout</Button>
           </div>
 
           {/* Messages */}
           <ScrollArea className="flex-1 p-4 border-none">
             {selectedTicket?.messages.map((message) => (
-              <div key={message.id} className="flex justify-center w-full mb-4">
+              <div key={message._id} className="flex justify-center w-full mb-4">
                 <div
                   className={`flex max-w-[80%] md:max-w-[70%] w-full ${
-                    message.isOutgoing ? "justify-start" : "justify-end"
+                    message.sender === 'admin' ? "justify-start" : "justify-end"
                   }`}
                 >
                   <div
                     className={`rounded-2xl px-3 py-1 ${
-                      message.isOutgoing ? "bg-[#212121] text-white" : "bg-[#8774E1] text-white"
+                      message.sender === 'admin' ? "bg-[#212121] text-white" : "bg-[#8774E1] text-white"
                     }`}
                   >
                     <div className="flex">
                       <p className="text-md break-words">{message.content}</p>
-                      <p className="text-[10px] md:text-[12px] text-gray-300 ml-1 mt-1 self-end">{message.timestamp}</p>
+                      <p className="text-[10px] md:text-[12px] text-gray-300 ml-1 mt-1 self-end">
+                      {new Date(message.createdAt).toLocaleTimeString([], { hour: 'numeric', minute: 'numeric', hour12: true })}
+                      </p>
                     </div>
                   </div>
                 </div>
