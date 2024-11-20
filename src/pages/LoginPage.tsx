@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { loginByMacAddress, loginByUsername, loginByLogin } from "../redux/features/authSlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { RootState } from "../redux/store";
 import { AppDispatch } from "../redux/store";
 
@@ -90,7 +90,10 @@ export default function LoginPage() {
       <div className="min-h-screen w-full bg-gradient-to-b from-[#2B4570] to-[#3A5A8C] p-6 flex items-center justify-center">
         <div className="">
           <div className="w-full max-w-md p-4 rounded-lg bg-black/10 backdrop-blur-sm md:w-[400px]">
-            <div className="flex flex-col gap-5 p-8">
+            <div className="flex justify-end">
+              <Link to="/adminLogin" className="text-gray-400">Are you admin?</Link>
+            </div>            
+            <div className="flex flex-col gap-5 py-4 px-4">
               <p className="text-center text-4xl text-gray-300 mb-4 font-bold">
                 Welcome!
               </p>
