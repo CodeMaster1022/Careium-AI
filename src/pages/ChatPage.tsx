@@ -10,8 +10,9 @@ import TicketModal from "@/components/modal/TicketModal"
 import { logout } from "@/redux/features/authSlice"
 import { RootState } from '@/redux/store';
 import api from "@/services/api"
-import io from 'socket.io-client'
+// import io from 'socket.io-client'
 import '../CSS/createButton.css'
+
 
 interface Message {
   _id: string
@@ -42,7 +43,7 @@ interface TicketData {
   messages: Message[]
 }
 
-const socket = io('https://telegram-app-backend-phi.vercel.app/');
+// const socket = io('https://telegram-app-backend-phi.vercel.app/');
 export default function Component() {
   const [tickets, setTickets] = useState<TicketData[]>([])
   const [newMessage, setNewMessage] = useState("")
@@ -67,25 +68,25 @@ export default function Component() {
     }
     fetchTickets()
     
-    socket.on('connect', () => {
-      console.log('Connected to server')
-    })  
+    // socket.on('connect', () => {
+    //   console.log('Connected to server')
+    // })  
 
-    socket.on('newMessage', (message: Message) => {
-      console.log(message);
-      setTickets(prevTickets => 
-        prevTickets.map(ticketData => 
-          ticketData.ticket._id === message.ticketId
-            ? { ...ticketData, messages: [...ticketData.messages, message] }
-            : ticketData
-        )
-      )
-    })
+    // socket.on('newMessage', (message: Message) => {
+    //   console.log(message);
+    //   setTickets(prevTickets => 
+    //     prevTickets.map(ticketData => 
+    //       ticketData.ticket._id === message.ticketId
+    //         ? { ...ticketData, messages: [...ticketData.messages, message] }
+    //         : ticketData
+    //     )
+    //   )
+    // })
     console.log("======>")
-    return () => {
-      socket.off('connect')
-      socket.off('newMessage')
-    }
+    // return () => {
+    //   socket.off('connect')
+    //   socket.off('newMessage')
+    // }
   }, [username, isloading])
   useEffect(()=>{
     console.log(tickets);
@@ -109,7 +110,7 @@ export default function Component() {
         ticketNumber: selectedTicket.ticket.ticketNumber
       }
       console.log(messageData);
-      socket.emit('sendMessage', messageData);
+      // socket.emit('sendMessage', messageData);
       setNewMessage("");
     } catch (error) {
       console.error('Error sending message:', error)
@@ -122,14 +123,14 @@ export default function Component() {
     <div className="flex w-full justify-center bg-[#17212b]">
     <div className="flex h-screen w-full max-w-[1440px]">
       {/* Sidebar - Telegram style dark */}
-      <div className={`${isSidebarOpen ? 'block' : 'hidden'} md:block w-full md:w-96 bg-[#17212b] border-r border-l border-b border-[#232e3c]`}>
-        <div className="p-6 h-full">
+      <div className={`${isSidebarOpen ? 'block' : 'hidden'} md:block md:w-96 w-[180px] bg-[#17212b] border-r border-l border-b border-[#232e3c]`}>
+        <div className="sm:p-6 px-2 py-5 h-full">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-white">
+            <h2 className="sm:text-2xl text-sm font-bold text-white">
               My Tickets
             </h2>
             <button
-              className="px-4 py-2 bg-[#3390ec] hover:bg-[#3b9aef] text-white rounded-lg transition-all duration-300 flex items-center gap-2"
+              className="sm:px-4 px-2 sm:py-2 py-1 bg-[#3390ec] hover:bg-[#3b9aef] text-white rounded-lg transition-all duration-300 flex items-center gap-2"
               onClick={() => setIsOpen(true)}
             >
               Create
@@ -175,28 +176,41 @@ export default function Component() {
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col bg-[#0E1621]">
         {/* Header */}
-        <div className="h-16 bg-[#17212b] border-b border-[#232e3c] flex items-center px-6">
+        <div className="h-16 bg-[#17212b] border-b border-[#232e3c] flex items-center sm:px-6 px-2">
           <Button
-            className="md:hidden mr-4 text-[#3390ec] hover:bg-[#232e3c]"
+            className="md:hidden mr-4 text-[#3390ec] hover:bg-[#232e3c] bg-gray-800"
             variant="ghost"
             onClick={toggleSidebar}
           >
-            <svg />
+           {isSidebarOpen ? '-': '+'}
           </Button>
           
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 rounded-full bg-[#3390ec]"></div>
               <h1 className="text-xl font-semibold text-white">
-                {selectedTicket ? `Ticket  ${selectedTicket.ticket.ticketNumber}` : 'Select a ticket'}
+                {selectedTicket ? `Ticket  ${selectedTicket.ticket.ticketNumber}` : 'Select'}
               </h1>
             </div>
-            <Button
-              className="bg-[#3390ec] hover:bg-[#3b9aef] transition-all duration-300"
+            <button
               onClick={handleLogout}
+              className="group flex items-center justify-start w-8 h-8 bg-gray-600 rounded-full cursor-pointer relative overflow-hidden transition-all duration-200 shadow-lg hover:w-12 hover:rounded-lg active:translate-x-1 active:translate-y-1"
             >
-              Logout
-            </Button>
+              <div
+                className="flex items-center justify-center w-full transition-all duration-300 group-hover:justify-start group-hover:px-3"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 512 512" fill="white">
+                  <path
+                    d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"
+                  ></path>
+                </svg>
+              </div>
+              <div
+                className="absolute right-5 transform translate-x-full opacity-0 text-white text-lg font-semibold transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
+              >
+                {/* Logout */}
+              </div>
+            </button>
           </div>
         </div>
 
