@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "@/services/api";
+
 const AdminLogin = () => {
     const [password,setPassword] = useState<string>('');
     const [username, setUsername] = useState<string>('');
@@ -18,10 +19,14 @@ const AdminLogin = () => {
         setLoading(true); // Set loading state
 
     try {
-        const response = await api.post('/adminLogin', { username, password }); // Adjust the URL as needed
+        const response = await api.post('/tickets/adminLogin', { username, password }); // Adjust the URL as needed
         // Handle successful login (e.g., store token, redirect, etc.)
-        console.log('Login successful:', response.data);
-        navigate('/adminPage')
+        if (response.status === 200) {
+            localStorage.setItem('userinfo', response.data.username);
+            console.log('Login successful:', response.data);
+            navigate('/adminPage')
+        }
+
         // You can redirect the user or store the token in local storage here
     } catch (error) {
         console.error('Login error:', error);

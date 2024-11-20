@@ -42,7 +42,7 @@ interface TicketData {
   messages: Message[]
 }
 
-const socket = io('https://telegram-app-backend-eosin.vercel.app/');
+const socket = io('http://localhost:3000/');
 export default function Component() {
   const [tickets, setTickets] = useState<TicketData[]>([])
   const [newMessage, setNewMessage] = useState("")
@@ -119,139 +119,135 @@ export default function Component() {
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen)
 
   return (
-    <div className="flex w-full justify-center bg-[#181818]">
-      <div className="flex h-screen w-full max-w-[1440px]">
-        {/* Sidebar */}
-        <div className={`${isSidebarOpen ? 'block' : 'hidden'} md:block w-full md:w-96 bg-[#212121] overflow-y-auto`}>
-          <div className="p-4 h-full">
-            <div className="flex justify-between mb-2">
-              <h2 className="mb-4 text-2xl font-bold text-blue-500">My tickets</h2>
-              <button className="button" onClick={()=>setIsOpen(true)}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="1.25rem"
-                  height="1.25rem"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                >
-                  <path d="M12 19v-7m0 0V5m0 7H5m7 0h7"></path>
-                </svg>
-                Create
-              </button>
-            </div>
+    <div className="flex w-full justify-center bg-[#17212b]">
+    <div className="flex h-screen w-full max-w-[1440px]">
+      {/* Sidebar - Telegram style dark */}
+      <div className={`${isSidebarOpen ? 'block' : 'hidden'} md:block w-full md:w-96 bg-[#17212b] border-r border-l border-b border-[#232e3c]`}>
+        <div className="p-6 h-full">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-white">
+              My Tickets
+            </h2>
+            <button
+              className="px-4 py-2 bg-[#3390ec] hover:bg-[#3b9aef] text-white rounded-lg transition-all duration-300 flex items-center gap-2"
+              onClick={() => setIsOpen(true)}
+            >
+              Create
+            </button>
+          </div>
+          
+          <div className="space-y-2">
             {tickets.map((ticketData) => (
               <div
                 key={ticketData.ticket._id}
-                className={`mt-1 cursor-pointer text-white rounded-lg p-4 ${
-                  ticketData.ticket._id === selectedTicketId ? "bg-[#8774E1] text-primary-foreground" : "hover:bg-green-400"
+                className={`transition-all duration-300 cursor-pointer rounded-lg p-4 ${
+                  ticketData.ticket._id === selectedTicketId 
+                    ? "bg-[#2b5278]" 
+                    : "hover:bg-[#232e3c]"
                 }`}
                 onClick={() => {
-                  setSelectedTicketId(ticketData.ticket._id)
-                  setIsSidebarOpen(false)
+                  setSelectedTicketId(ticketData.ticket._id);
+                  setIsSidebarOpen(false);
                 }}
               >
-                Ticket #{ticketData.ticket.ticketNumber}
+                <div className="flex items-center justify-between">
+                  <span className="text-white font-medium flex items-center">Ticket
+                    <div className={`w-4 h-4 rounded-full flex items-center justify-center ml-4 ${
+                  'bg-blue-600'
+                    }`}>
+                      <p className=" text-xs">{ticketData.ticket.ticketNumber}</p>
+                    </div>
+                  </span>
+                  <span className={`px-2 py-1 rounded-full text-xs ${
+                    ticketData.ticket.status === 'open'
+                      ? 'bg-[#8774E1]/20 text-[#8774E1]'
+                      : 'bg-yellow-500/20 text-yellow-400'
+                  }`}>
+                    {ticketData.ticket.status}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
         </div>
+      </div>
 
-        {/* Main Content */}
-        <div className={`${isSidebarOpen ? 'hidden' : 'block'} flex flex-1 flex-col bg-[url('./assets/1.jpg')] bg-cover bg-center`}>
-          {/* Header */}
-          <div className="h-16 bg-[#212121] border-[black] border-l border-border flex items-center px-4 w-full justify-between">
+      {/* Main Chat Area */}
+      <div className="flex-1 flex flex-col bg-[#0E1621]">
+        {/* Header */}
+        <div className="h-16 bg-[#17212b] border-b border-[#232e3c] flex items-center px-6">
+          <Button
+            className="md:hidden mr-4 text-[#3390ec] hover:bg-[#232e3c]"
+            variant="ghost"
+            onClick={toggleSidebar}
+          >
+            <svg />
+          </Button>
+          
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-[#3390ec]"></div>
+              <h1 className="text-xl font-semibold text-white">
+                {selectedTicket ? `Ticket  ${selectedTicket.ticket.ticketNumber}` : 'Select a ticket'}
+              </h1>
+            </div>
             <Button
-              className="md:hidden mr-2"
-              variant="ghost"
-              size="icon"
-              onClick={toggleSidebar}
-              aria-label="Toggle sidebar"
+              className="bg-[#3390ec] hover:bg-[#3b9aef] transition-all duration-300"
+              onClick={handleLogout}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                className="h-6 w-6"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
+              Logout
             </Button>
-            <h1 className="text-xl font-bold text-white">
-              {selectedTicket ? `Ticket #${selectedTicket.ticket.ticketNumber}` : 'Select a ticket'}
-            </h1>
-            <Button className="hover:bg-green-400" onClick={handleLogout}>Logout</Button>
           </div>
+        </div>
 
-          {/* Messages */}
-          <ScrollArea className="flex-1 p-4 border-none">
+        {/* Messages Area */}
+        <ScrollArea className="flex-1 p-6">
+          <div className="space-y-4">
             {selectedTicket?.messages.map((message) => (
-              <div key={message._id} className="flex justify-center w-full mb-4">
-                <div
-                  className={`flex max-w-[80%] md:max-w-[70%] w-full ${
-                    message.sender === 'admin' ? "justify-start" : "justify-end"
-                  }`}
-                >
-                  <div
-                    className={`rounded-2xl px-3 py-1 ${
-                      message.sender === 'admin' ? "bg-[#212121] text-white" : "bg-[#8774E1] text-white"
-                    }`}
-                  >
-                    <div className="flex">
-                      <p className="text-md break-words">{message.content}</p>
-                      <p className="text-[10px] md:text-[12px] text-gray-300 ml-1 mt-1 self-end">
-                      {new Date(message.createdAt).toLocaleTimeString([], { hour: 'numeric', minute: 'numeric', hour12: true })}
-                      </p>
-                    </div>
+              <div
+                key={message._id}
+                className={`flex ${message.sender === 'admin' ? 'justify-start' : 'justify-end'}`}
+              >
+                <div className={`max-w-[80%] ${
+                  message.sender === 'admin'
+                    ? 'bg-[#182533] rounded-br-xl rounded-bl-xl rounded-tr-xl'
+                    : 'bg-[#2b5278] rounded-bl-xl rounded-br-xl rounded-tl-xl'
+                } p-4 shadow-lg`}>
+                  <p className="text-white">{message.content}</p>
+                  <div className="mt-1 text-xs text-gray-400 flex justify-end">
+                    {new Date(message.createdAt).toLocaleTimeString([], {
+                      hour: 'numeric',
+                      minute: 'numeric',
+                      hour12: true
+                    })}
                   </div>
                 </div>
               </div>
             ))}
-          </ScrollArea>
+          </div>
+        </ScrollArea>
 
-          {/* Input Area */}
-          <div className="p-4 md:p-8">
-            <div className="flex gap-2 max-w-full md:max-w-[70%] mx-auto">
-              <Input
-                className="py-4 md:py-6 bg-[#212121] text-white flex-grow"
-                placeholder="Type your message..."
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleSendMessage()
-                  }
-                }}
-              />
-              <Button
-                className="bg-blue-500 text-white hover:bg-blue-400 transition-all duration-300 md:p-6"
-                onClick={handleSendMessage}
-              >
-                <span className="sr-only">Send message</span>
-                <svg
-                  className="w-5 h-5"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
-                    strokeLinejoin="round"
-                    strokeLinecap="round"
-                  ></path>
-                </svg>
-              </Button>
-            </div>
+        {/* Input Area */}
+        <div className="p-6 bg-[#17212b] border-t border-[#232e3c]">
+          <div className="flex gap-3 max-w-3xl mx-auto">
+            <Input
+              className="bg-[#242f3d] border-[#232e3c] text-white px-4 py-3 rounded-xl focus:ring-2 focus:ring-[#3390ec]"
+              placeholder="Type your message..."
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
+            />
+            <Button
+              className="bg-[#3390ec] hover:bg-[#3b9aef] px-6 rounded-xl transition-all duration-300"
+              onClick={handleSendMessage}
+            >
+              Send
+            </Button>
           </div>
         </div>
       </div>
       <TicketModal option={isOpen} handleClose={() => setIsOpen(false)} />
     </div>
-  )
+  </div>
+  );
 }
