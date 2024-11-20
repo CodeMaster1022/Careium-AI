@@ -42,7 +42,7 @@ interface TicketData {
   messages: Message[]
 }
 
-const socket = io('http://localhost:3000/');
+const socket = io('https://telegram-app-backend-eosin.vercel.app/');
 export default function Component() {
   const [tickets, setTickets] = useState<TicketData[]>([])
   const [newMessage, setNewMessage] = useState("")
