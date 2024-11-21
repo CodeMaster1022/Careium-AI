@@ -43,7 +43,7 @@ interface TicketData {
   messages: Message[]
 }
 
-// const socket = io('https://telegram-app-backend-phi.vercel.app/');
+// const socket = io('https://telegram-app-backend-one.vercel.app/');
 export default function Component() {
   const [tickets, setTickets] = useState<TicketData[]>([])
   const [newMessage, setNewMessage] = useState("")
