@@ -94,8 +94,9 @@ const TicketModal: React.FC<TicketModalProps> = ({ option, handleClose }) => {
   const [description, setDescription] = useState("");
   const [server, SetServer] = useState<string>("tzv1");
   const { toast } = useToast();
+  const createBy = String(localStorage.getItem("username"));
   const credentials = {
-    createdBy: "00:1A:79:89:23:11",
+    createdBy: createBy,
     server: server,
     content: selectedContent,
     issues: addoption,
@@ -118,6 +119,7 @@ const TicketModal: React.FC<TicketModalProps> = ({ option, handleClose }) => {
   };
   // Update the onChange handler for content selection
   const handleContentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    console.log(selectedWord);
     setSelectedContent(e.target.value);
     setSelectedOption([]); // Clear selected options
     setAddOption([]); // Clear add options array

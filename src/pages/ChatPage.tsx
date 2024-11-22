@@ -230,19 +230,13 @@ export default function Component() {
                               <span>👤 Created By: {selectedTicket.ticket.createdBy}</span>
                             </DropdownMenuItem>
                             <DropdownMenuItem>
-                              <span> 📄 Content: {selectedTicket.ticket.content}</span>
+                              <span> 📝 Description: {selectedTicket.ticket.description}</span>
                             </DropdownMenuItem>
                             <DropdownMenuItem>
-                              <span>👤 Created By: {selectedTicket.ticket.createdBy}</span>
+                              <span>❗ Issues: {selectedTicket.ticket.issues}</span>
                             </DropdownMenuItem>
                             <DropdownMenuItem>
-                              <span> 📝 Description: {selectedTicket.ticket.content}</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <span>❗ Issues: {selectedTicket.ticket.createdBy}</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <span>⚠️ Problems: {selectedTicket.ticket.createdBy}</span>
+                              <span>⚠️ Problems: {selectedTicket.ticket.problems}</span>
                             </DropdownMenuItem>
                           </DropdownMenuGroup>
                           <DropdownMenuSeparator />

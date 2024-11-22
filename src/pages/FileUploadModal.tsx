@@ -95,7 +95,9 @@ const FileUploadModal: React.FC<FileUploadModalProps> = ({ isOpen, onClose, tick
         setIsUploading(false)
       }
 
-      xhr.open('POST', 'http://localhost:3000/api/tickets/sendFile')
+      xhr.open('POST', 'http://localhost:3000/api/tickets/sendFile');
+      const token = localStorage.getItem('accessToken');
+      xhr.setRequestHeader('Authorization', `Bearer ${token}`);
       xhr.send(formData)
 
     } catch (error) {

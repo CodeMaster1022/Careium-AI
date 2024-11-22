@@ -6,6 +6,7 @@ interface AuthContextType {
   login: (identifier: string, password: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
+  role: string;
 }
 
 export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -13,7 +14,7 @@ export const AuthContext = createContext<AuthContextType>({} as AuthContextType)
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<any>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-
+  const [role, setRole] = useState<string>('');
   useEffect(() => {
     const initializeAuth = async () => {
       const token = localStorage.getItem('accessToken');
@@ -57,6 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem('username', username);
       localStorage.setItem('macos', macos);
       localStorage.setItem('role', role);
+      setRole(role);
       axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
       await fetchUserProfile();
     } catch (error) {
@@ -78,7 +80,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated }}>
+    <AuthContext.Provider value={{ user, login, logout, isAuthenticated, role }}>
       {children}
     </AuthContext.Provider>
   );
