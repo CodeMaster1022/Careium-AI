@@ -196,8 +196,8 @@ const TicketModal: React.FC<TicketModalProps> = ({ option, handleClose }) => {
                 aria-label="Select the server"
                 onChange={(e) => SetServer(e.target.value)}
               >
-                {servers.map((server) => (
-                  <option value={server.name}>{server.name}</option>
+                {servers.map((server, index) => (
+                  <option key={index} value={server.name}>{server.name}</option>
                 ))}
               </select>
             </div>
@@ -214,8 +214,8 @@ const TicketModal: React.FC<TicketModalProps> = ({ option, handleClose }) => {
                 aria-label="Select the content"
                 onChange={handleContentChange}
               >
-                {contents.map((content) => (
-                  <option value={content.name}>{content.name}</option>
+                {contents.map((content, index) => (
+                  <option key={index} value={content.name}>{content.name}</option>
                 ))}
               </select>
             </div>

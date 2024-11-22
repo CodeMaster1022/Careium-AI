@@ -109,7 +109,7 @@ export default function Component() {
 
   const handleLogout = () => {
     dispatch(logout());
-    router("/");
+    router("/login");
   };
 
   const handleSendMessage = async () => {

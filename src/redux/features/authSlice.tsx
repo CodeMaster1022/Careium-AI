@@ -88,7 +88,10 @@ const authSlice = createSlice({
     reducers: {
         logout(state) {
             state.user = null;
-            localStorage.removeItem('userinfo')
+            localStorage.removeItem('accesstoken')
+            localStorage.removeItem('refreshtoken')
+            localStorage.removeItem('username')
+            localStorage.removeItem('macos')
             state.isAuthenticated = false;
         },
     },
