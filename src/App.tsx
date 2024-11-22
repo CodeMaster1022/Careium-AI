@@ -1,44 +1,42 @@
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import MessagePage from "./pages/TicketChat";
+import Login from "./pages/LoginPage";
+import ChatPage from "./pages/ChatPage";
+import AdminPage from "./pages/AdminPage";
+import PrivateRoute from "./routing/ProtectedRoute";
+import Register from "./pages/Register";
+import { AuthProvider } from "./context/AuthContext";
 import { Provider } from "react-redux";
 import store from "./redux/store";
-import MessagePage from "./pages/TicketChat";
-import ProtectedRoute from "./routing/ProtectedRoute";
-import LoginPage from "./pages/LoginPage";
-import ChatPage from "./pages/ChatPage";
-import AdminLogin from "./pages/AdminLogin";
-import AdminPage from "./pages/AdminPage";
-
 function App() {
+  const role = localStorage.getItem("role");
   return (
     <Provider store={store}>
-      <BrowserRouter>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/adminLogin" element={<AdminLogin />} />
-          <Route path="/adminPage" element={<AdminPage />} />
-          <Route path="/messages/:ticketNumber" element={<MessagePage />} />
-          {/* Protected Routes */}
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <LoginPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/chat"
-            element={
-              <ProtectedRoute>
-                <Outlet />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<ChatPage />} />
-            <Route path="history" element={<ChatPage />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route element={<PrivateRoute />}>
+              {role === "admin" ? (
+                <>
+                  <Route path="/" element={<AdminPage />} />
+                  <Route path="/adminPage" element={<AdminPage />} />
+                  <Route
+                    path="/messages/:ticketNumber"
+                    element={<MessagePage />}
+                  />
+                </>
+              ) : (
+                <>
+                  <Route path="/" element={<ChatPage />} />
+                  <Route path="/chatPage" element={<ChatPage />} />
+                </>
+              )}
+            </Route>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </Provider>
   );
 }
